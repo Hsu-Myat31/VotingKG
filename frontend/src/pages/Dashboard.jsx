@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./Dashboard.css";
 
 const API_URL = "/api/candidates";
 const SECTION_ORDER = ["King", "Queen", "Style", "Smart", "Mr. Popular", "Ms. Popular"];
@@ -18,6 +19,8 @@ function Dashboard() {
     const [editingId, setEditingId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+    const [selectedFileName, setSelectedFileName] = useState("");
 
     const loadCandidates = async () => {
         try {
@@ -46,6 +49,23 @@ function Dashboard() {
         return sections;
     }, {});
 
+    const resolveImageUrl = (photoValue) => {
+        if (!photoValue) {
+            return "";
+        }
+
+        if (photoValue.startsWith("http://") || photoValue.startsWith("https://") || photoValue.startsWith("data:")) {
+            return photoValue;
+        }
+
+        const normalizedPath = photoValue.replace(/^\/+/, "");
+        if (normalizedPath.startsWith("api/")) {
+            return `http://localhost:8080/${normalizedPath}`;
+        }
+
+        return `http://localhost:8080/api/${normalizedPath}`;
+    };
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData((previous) => ({ ...previous, [name]: value }));
@@ -55,26 +75,31 @@ function Dashboard() {
         const file = event.target.files?.[0];
 
         if (!file) {
+            setSelectedFileName("");
             setFormData((previous) => ({ ...previous, photo: "" }));
             return;
         }
 
-        const isJpg = file.type === "image/jpeg" || file.type === "image/jpg" || /\.jpe?g$/i.test(file.name);
+        const isImage = file.type.startsWith("image/") || /\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(file.name);
 
-        if (!isJpg) {
-            setError("Please choose a .jpg or .jpeg file.");
+        if (!isImage) {
+            setError("Please choose a valid image file.");
             event.target.value = "";
+            setSelectedFileName("");
             setFormData((previous) => ({ ...previous, photo: "" }));
             return;
         }
 
-        const maxSizeInBytes = 150 * 1024;
+        const maxSizeInBytes = 20 * 1024 * 1024;
         if (file.size > maxSizeInBytes) {
-            setError("Please choose a JPG smaller than 150 KB. Large photos are too big for the database.");
+            setError("Please choose an image smaller than 20 MB.");
             event.target.value = "";
+            setSelectedFileName("");
             setFormData((previous) => ({ ...previous, photo: "" }));
             return;
         }
+
+        setSelectedFileName(file.name);
 
         const reader = new FileReader();
         reader.onload = () => {
@@ -98,7 +123,13 @@ function Dashboard() {
             bio: "",
             photo: "",
         });
+        setSelectedFileName("");
         setEditingId(null);
+    };
+
+    const clearMessages = () => {
+        setError("");
+        setSuccessMessage("");
     };
 
     const handleSubmit = async (event) => {
@@ -143,10 +174,14 @@ function Dashboard() {
                 throw new Error(message);
             }
 
+            const successText = editingId !== null ? "Candidate updated successfully." : "Candidate uploaded successfully.";
             resetForm();
+            setSuccessMessage(successText);
+            setError("");
             await loadCandidates();
         } catch (submitError) {
             console.error("Candidate save failed:", submitError);
+            setSuccessMessage("");
             setError(submitError.message || "Something went wrong while saving the candidate.");
         }
     };
@@ -166,6 +201,14 @@ function Dashboard() {
     };
 
     const handleDelete = async (candidateId) => {
+        const candidate = candidates.find((item) => item.id === candidateId);
+        const candidateName = candidate?.name || "this candidate";
+
+        const confirmed = window.confirm(`Are you sure you want to delete ${candidateName}? This action cannot be undone.`);
+        if (!confirmed) {
+            return;
+        }
+
         try {
             const response = await fetch(`${API_URL}/${candidateId}`, { method: "DELETE" });
 
@@ -240,14 +283,18 @@ function Dashboard() {
                         <textarea name="bio" value={formData.bio} onChange={handleChange} placeholder="Short bio..." rows="3" />
                     </label>
 
-                    <label>
-                        Photo (.jpg)
-                        <input type="file" accept=".jpg,.jpeg,image/jpeg" onChange={handlePhotoChange} />
+                    <label className="photo-upload">
+                        <span className="photo-upload-title">Photo (all image types)</span>
+                        <span className="photo-upload-box">
+                            <span className="upload-icon">⇪</span>
+                            <span>{selectedFileName || (formData.photo ? "Change photo" : "Upload candidate photo")}</span>
+                        </span>
+                        <input type="file" accept="image/*" onChange={handlePhotoChange} className="photo-input" />
                     </label>
 
                     {formData.photo && (
                         <div className="photo-preview-wrap">
-                            <img src={formData.photo} alt="Selected candidate preview" className="candidate-photo preview-photo" />
+                            <img src={resolveImageUrl(formData.photo)} alt="Selected candidate preview" className="candidate-photo preview-photo" />
                         </div>
                     )}
 
@@ -264,6 +311,7 @@ function Dashboard() {
                     </div>
 
                     {error && <p className="dashboard-error">{error}</p>}
+                    {successMessage && <p className="dashboard-success">{successMessage}</p>}
                 </form>
 
                 <div className="sections-panel">
@@ -272,7 +320,7 @@ function Dashboard() {
                     ) : (
                         SECTION_ORDER.map((sectionName) => {
                             const sectionCandidates = groupedCandidates[sectionName] || [];
-                            const sectionVotes = sectionCandidates.reduce((sum, candidate) => sum + Number(candidate.votes || 0), 0);
+                            const sectionVotes = sectionCandidates.reduce((sum, candidate) => sum + Number(candidate.votes || 1), 0);
 
                             return (
                                 <div className="section-card" key={sectionName}>
@@ -291,7 +339,7 @@ function Dashboard() {
                                                 return (
                                                     <div className="candidate-card" key={candidate.id}>
                                                         <div className="profile-row">
-                                                            <img src={candidate.photo || "https://images.unsplash.com/photo-1544005313-94ddf0286df2"} alt={candidate.name} className="candidate-photo" />
+                                                            <img src={resolveImageUrl(candidate.photo) || "https://images.unsplash.com/photo-1544005313-94ddf0286df2"} alt={candidate.name} className="candidate-photo" />
                                                             <div className="profile-info">
                                                                 <div className="candidate-name-row">
                                                                     <span className="candidate-no">#{candidate.no ?? "-"}</span>

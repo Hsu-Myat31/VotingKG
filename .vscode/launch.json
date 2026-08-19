@@ -1,15 +1,14 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "type": "java",
+            "name": "Spring Boot-Gp3Application<Gp3>",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.voting.Gp3.Gp3Application",
+            "projectName": "Gp3",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

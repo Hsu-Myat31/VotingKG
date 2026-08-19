@@ -17,8 +17,8 @@ import About from "./pages/About";
 function AppContent() {
     const location = useLocation();
 
-  // Welcome page "/" မှာပဲ Navbar ကိုဖျောက်မယ်
-  const showNavbar = location.pathname !== "/welcome";
+  const hideNavbarOn = ["/welcome", "/dashboard"];
+  const showNavbar = !hideNavbarOn.includes(location.pathname);
     return (
         <>
 

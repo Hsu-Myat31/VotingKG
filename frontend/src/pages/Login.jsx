@@ -1,17 +1,29 @@
 import { useState } from "react";
+import api from "../services/api";
 import "./Auth.css";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        console.log("Login data:", {
-            email,
-            password,
-        });
+        try {
+            const response = await api.post("/auth/login", {
+                email,
+                password,
+            });
+
+            setMessage(response.data?.message || "Login successful");
+            setEmail("");
+            setPassword("");
+        } catch (error) {
+            const errMessage = error.response?.data || "Login failed";
+            setMessage(typeof errMessage === "string" ? errMessage : "Login failed");
+            console.error("Login error:", error);
+        }
     };
 
     return (
@@ -67,6 +79,8 @@ function Login() {
                     >
                         Login
                     </button>
+
+                    {message && <p className="auth-message">{message}</p>}
 
                 </form>
 

@@ -1,19 +1,32 @@
 import { useState } from "react";
+import api from "../services/api";
 import "./Auth.css";
 
 function Register() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        console.log("Register data:", {
-            name,
-            email,
-            password,
-        });
+        try {
+            const response = await api.post("/auth/register", {
+                name,
+                email,
+                password,
+            });
+
+            setMessage(response.data || "Registration successful");
+            setName("");
+            setEmail("");
+            setPassword("");
+        } catch (error) {
+            const errMessage = error.response?.data || "Registration failed";
+            setMessage(errMessage);
+            console.error("Registration error:", error);
+        }
     };
 
     return (
@@ -86,6 +99,10 @@ function Register() {
                     >
                         Register
                     </button>
+
+                    {message && (
+                        <p className="auth-message">{message}</p>
+                    )}
 
                 </form>
 

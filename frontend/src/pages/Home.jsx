@@ -74,7 +74,7 @@ function Home() {
                 </section>
             </main>
 
-            <nav className="navbar">
+            {/* <nav className="navbar">
                 <Link to="/" className="nav-item active">
                     <i className="fa-solid fa-house"></i>
                     <span>Home</span>
@@ -95,7 +95,7 @@ function Home() {
                     <i className="fa-solid fa-circle-info"></i>
                     <span>About</span>
                 </Link>
-            </nav>
+            </nav> */}
         </div>
     );
 }
