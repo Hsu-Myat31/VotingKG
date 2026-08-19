@@ -1,0 +1,395 @@
+.welcome-screen {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  padding: 24px;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: Georgia, serif;
+  background-color: #071b42;
+  scrollbar-width: thin;
+  scrollbar-color: #d4af37 #071b42;
+}
+
+.welcome-screen::-webkit-scrollbar {
+  width: 7px;
+}
+
+.welcome-screen::-webkit-scrollbar-track {
+  background: #071b42;
+}
+
+.welcome-screen::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: linear-gradient(#ffd978, #9b771b);
+}
+
+.welcome-screen,
+.welcome-screen * {
+  box-sizing: border-box;
+}
+
+.welcome-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background-image: var(--welcome-background);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.18;
+  filter: blur(2px);
+  transform: scale(1.03);
+}
+
+.welcome-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: rgba(3, 18, 48, 0.55);
+}
+
+.welcome-card {
+  position: relative;
+  z-index: 2;
+  width: min(90%, 700px);
+  min-height: calc(100dvh - 48px);
+  margin: 0 auto;
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+.welcome-corner {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  pointer-events: none;
+}
+
+.welcome-corner-top-left {
+  top: 20px;
+  left: 20px;
+  border-top: 2px solid #d4af37;
+  border-left: 2px solid #d4af37;
+}
+
+.welcome-corner-top-right {
+  top: 20px;
+  right: 20px;
+  border-top: 2px solid #d4af37;
+  border-right: 2px solid #d4af37;
+}
+
+.welcome-corner-bottom-left {
+  bottom: 20px;
+  left: 20px;
+  border-bottom: 2px solid #d4af37;
+  border-left: 2px solid #d4af37;
+}
+
+.welcome-corner-bottom-right {
+  right: 20px;
+  bottom: 20px;
+  border-right: 2px solid #d4af37;
+  border-bottom: 2px solid #d4af37;
+}
+
+.welcome-logo-wrapper {
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: welcome-logo-float 3s ease-in-out infinite;
+}
+
+.welcome-logo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+@keyframes welcome-logo-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.welcome-university-name {
+  margin: 0;
+  color: #d7b56d;
+  font-size: 14px;
+  letter-spacing: 4px;
+}
+
+.welcome-main-title {
+  margin: 20px 0 0;
+  color: #ffffff;
+  font-size: clamp(45px, 7vw, 60px);
+  line-height: 1.1;
+}
+
+.welcome-subtitle {
+  margin: 0 0 20px;
+  color: #e8c25d;
+  font-size: clamp(38px, 6vw, 52px);
+  font-style: italic;
+  line-height: 1.15;
+}
+
+.welcome-year {
+  margin: 0 0 30px;
+  color: #d9bf78;
+  letter-spacing: 3px;
+}
+
+.welcome-tagline {
+  margin: 0 0 35px;
+  color: #ffffff;
+  opacity: 0.8;
+}
+
+.welcome-vote-button {
+  min-width: 30px;
+  padding: 1px 20px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  border-radius: 25px;
+  color: #071b42;
+  text-decoration: none;
+  appearance: none;
+  font-family: Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(45deg, #e0b347, #ffd978);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.45);
+  transition: transform 0.4s, box-shadow 0.4s, filter 0.4s;
+}
+
+.welcome-vote-button:hover {
+  color: #071b42;
+  text-decoration: none;
+  transform: translateY(-4px);
+  filter: brightness(1.06);
+  box-shadow: 0 0 35px gold;
+}
+
+.welcome-vote-button:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 4px;
+}
+
+.welcome-quote {
+  margin: 40px 0 0;
+  color: #dddddd;
+  font-style: italic;
+}
+
+.welcome-particles {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.welcome-particle {
+  position: absolute;
+  bottom: -10px;
+  display: block;
+  border-radius: 50%;
+  background: gold;
+  box-shadow: 0 0 7px rgba(255, 215, 0, 0.7);
+  animation-name: welcome-particle-float;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes welcome-particle-float {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-110vh);
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-screen {
+    padding: 12px;
+    overflow-y: auto;
+  }
+
+  .welcome-card {
+    width: 100%;
+    min-height: calc(100dvh - 24px);
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+
+  .welcome-logo-wrapper {
+    width: 145px;
+    height: 145px;
+  }
+
+  .welcome-university-name {
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  .welcome-main-title {
+    font-size: clamp(37px, 12vw, 48px);
+  }
+
+  .welcome-subtitle {
+    font-size: clamp(31px, 10vw, 40px);
+  }
+
+  .welcome-tagline {
+    font-size: 16px;
+  }
+
+  .welcome-vote-button {
+    width: 100%;
+    min-width: 0;
+    padding: 15px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .welcome-card {
+    padding: 26px 16px;
+  }
+
+  .welcome-logo-wrapper {
+    width: 125px;
+    height: 125px;
+  }
+
+  .welcome-university-name {
+    font-size: 10px;
+  }
+
+  .welcome-year,
+  .welcome-tagline {
+    margin-bottom: 22px;
+  }
+
+  .welcome-quote {
+    margin-top: 28px;
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-logo-wrapper,
+  .welcome-particle {
+    animation: none;
+  }
+}
+
+/* Remove old white button wrapper */
+.welcome-card > button {
+  width: auto !important;
+  min-width: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  appearance: none !important;
+
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Correct Vote Now link button */
+.welcome-vote-button {
+  width: auto !important;
+  min-width: 230px;
+
+  padding: 18px 60px;
+
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
+
+  border: 0 !important;
+  border-radius: 50px !important;
+
+  color: #071b42 !important;
+  text-decoration: none !important;
+
+  font-family: Georgia, serif;
+  font-size: 20px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  background:
+    linear-gradient(
+      45deg,
+      #e0b347,
+      #ffd978
+    ) !important;
+
+  box-shadow:
+    0 0 20px rgba(255, 215, 0, 0.45) !important;
+
+  transition:
+    transform 0.4s,
+    box-shadow 0.4s;
+}
+
+.welcome-vote-button:hover {
+  color: #071b42 !important;
+  text-decoration: none !important;
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 0 35px gold !important;
+}
+
+@media (max-width: 768px) {
+  .welcome-vote-button {
+    width: 100% !important;
+    min-width: 0;
+
+    padding: 15px;
+  }
+}
