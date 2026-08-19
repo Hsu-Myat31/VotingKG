@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Quiz App</title>
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --success-color: #2ECC71;
+            --error-color: #E74C3C;
+            --dark-color: #006154;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1c3f74;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background: rgb(250, 255, 253);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 500px;
+            max-width: 90%;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--dark-color);
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #e0e0e0;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+        }
+
+        .correct {
+            background-color: var(--success-color) !important;
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .wrong {
+            background-color: var(--error-color) !important;
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .next-btn {
+            background-color: var(--primary-color);
+            color: rgb(247, 247, 247);
+            border: none;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .next-btn:hover {
+            background-color: #3e78c5;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="quiz-header">
+            <h2 id="question">Loading Question...</h2>
+        </div>
+        <div id="answer-buttons" class="btn-grid"></div>
+        
+        <div class="controls">
+            <button id="next-btn" class="next-btn hide">Next Question</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What does HTML stand for?",
+                answers: [
+                    { text: "Hyper Text Markup Language", correct: true },
+                    { text: "Home Tool Markup Language", correct: false },
+                    { text: "Hyperlinks and Text Markup Language", correct: false }
+                ]
+            },
+            {
+                question: "What is the primary responsibility of CSS?",
+                answers: [
+                    { text: "To control the logic of the website", correct: false },
+                    { text: "To style and design the website", correct: true },
+                    { text: "To store data in a database", correct: false }
+                ]
+            },
+            {
+                question: "Which language runs natively inside a web browser?",
+                answers: [
+                    { text: "Java", correct: false },
+                    { text: "Python", correct: false },
+                    { text: "JavaScript", correct: true }
+                ]
+            },
+            {
+                question: "Which technology is primarily used to style and design the layout of web pages?",
+        answers: [
+            { text: "HTML", correct: false },
+            { text: "CSS", correct: true },
+            { text: "JavaScript", correct: false }
+        ]
+    },
+    {
+        question: "Which language is widely used for Artificial Intelligence (AI), Data Science, and Machine Learning?",
+        answers: [
+            { text: "HTML", correct: false },
+            { text: "CSS", correct: false },
+            { text: "Python", correct: true }
+        ]
+    },
+        ];
+
+        const questionElement = document.getElementById('question');
+        const answerButtonsElement = document.getElementById('answer-buttons');
+        const nextButton = document.getElementById('next-btn');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            nextButton.innerHTML = "Next Question";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            let currentQuestion = questions[currentQuestionIndex];
+            let questionNo = currentQuestionIndex + 1;
+            questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerHTML = answer.text;
+                answerButtonsElement.appendChild(button);
+                
+                if(answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener('click', selectAnswer);
+            });
+        }
+
+        function resetState() {
+            nextButton.classList.add('hide');
+            while(answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedBtn = e.target;
+            const isCorrect = selectedBtn.dataset.correct === "true";
+            
+            if(isCorrect) {
+                selectedBtn.classList.add("correct");
+                score++;
+            } else {
+                selectedBtn.classList.add("wrong");
+            }
+
+            Array.from(answerButtonsElement.children).forEach(button => {
+                if(button.dataset.correct === "true") {
+                    button.classList.add("correct");
+                }
+                button.disabled = true;
+            });
+
+            nextButton.classList.remove('hide');
+        }
+
+        function showScore() {
+            resetState();
+            questionElement.innerHTML = "You scored " + score + " out of " + questions.length + "!";
+            nextButton.innerHTML = "Play Again";
+            nextButton.classList.remove('hide');
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if(currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        nextButton.addEventListener('click', () => {
+            if(currentQuestionIndex < questions.length) {
+                handleNextButton();
+            } else {
+                startQuiz();
+            }
+        });
+
+        startQuiz();
+    </script>
+</body>
+</html>
