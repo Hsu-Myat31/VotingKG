@@ -491,12 +491,13 @@ input {
   }
 
   .header {
+    min-height: 76px;
     padding: 6px 10px;
   }
 
   .header-logo {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     margin-right: 8px;
   }
 
@@ -505,7 +506,7 @@ input {
   }
 
   .header-title h3 {
-    font-size: clamp(12px, 4vw, 17px);
+    font-size: 13px;
     letter-spacing: 1.2px;
   }
 
