@@ -109,12 +109,28 @@ function Boy() {
 
   const selectCategory = (candidateId, category) => {
     const allVotes = readSavedVotes();
-    const newBoys = { ...(allVotes.boys || {}), [candidateId]: category };
-    const updatedVotes = { ...allVotes, boys: newBoys, girls: allVotes.girls || {} };
+    const currentBoys = { ...(allVotes.boys || {}) };
 
+    // If clicking the title they already have, unselect it (toggle off)
+    if (currentBoys[candidateId] === category) {
+      delete currentBoys[candidateId];
+    } else {
+      // 1. Remove this selected category (e.g. "king") from ANY other person who currently has it
+      Object.keys(currentBoys).forEach((id) => {
+        if (currentBoys[id] === category) {
+          delete currentBoys[id];
+        }
+      });
+
+      // 2. Assign the category to the newly selected candidate
+      currentBoys[candidateId] = category;
+    }
+
+    const updatedVotes = { ...allVotes, boys: currentBoys, girls: allVotes.girls || {} };
+
+    // Save to LocalStorage and update state
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedVotes));
-    setSelections(newBoys);
-
+    setSelections(currentBoys);
   };
 
   const showSparkles = (candidateId, category) => {
